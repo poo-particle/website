@@ -1,0 +1,17 @@
+version: "3"
+services:
+  # Mongo?
+  redis:
+    container_name: redis-particle
+    image: redis:alpine
+    networks:
+      - particle
+    volumes:
+      - ~/storage/redis:/data
+    ports:
+      - 6379:6379
+    restart: always
+
+networks:
+  particle:
+    external: false

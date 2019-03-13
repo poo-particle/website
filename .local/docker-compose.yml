@@ -4,14 +4,73 @@ services:
   redis:
     container_name: redis-particle
     image: redis:alpine
-    networks:
-      - particle
     volumes:
-      - ~/storage/redis:/data
+      - ./data/redis:/data
     ports:
       - 6379:6379
     restart: always
 
-networks:
-  particle:
-    external: false
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.1
+    container_name: elasticsearch
+    volumes:
+      - ./data/elasticsearch/data:/usr/share/elasticsearch/data
+      - ./data/elasticsearch/configs/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash-oss:6.6.1
+    container_name: logstash
+    volumes:
+      - ./data/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./data/logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - 5000:5000/udp
+      - 5001:5001/tcp
+      - 9600:9600
+      - 31311:31311
+    # environment:
+    #   LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:6.6.1
+    container_name: kibana
+    volumes:
+      - ./data/kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:6.6.1
+  #   container_name: logstash
+  #   ports:
+  #     - 5000:5000
+  #     - 9600:9600
+  #   volumes:
+  #     # - ./docker-data/logstash/pipeline:/usr/share/logstash/pipeline
+  #     - ./docker-data/logstash/settings/logstash.conf:/usr/share/logstash/config/logstahs.conf
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+  #   container_name: elasticsearch
+  #   volumes:
+  #     - ./docker-data/elasticsearch/data:/usr/share/elasticsearch/data
+  #     # - ./docker-data/elasticsearch/configs:/usr/share/elasticsearch/config
+  #   ports:
+  #     - 9300:9300
+  #     - 9200:9200
+  #   environment:
+  #     discovery.type: single-node
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:6.6.1
+  #   container_name: kibana
+  #   # volumes:
+  #     # - ./docker-data/kibana:/usr/share/kibana/config
+  #   ports:
+  #     - 5601:5601

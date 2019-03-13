@@ -9,7 +9,7 @@ function isTestEnv() {
 }
 
 module.exports = {
-  async createServer({ host = '0.0.0.0', port = 3000 }) {
+  async createServer({ host = '0.0.0.0', port = 3000 } = {}) {
     const server = Hapi.server({
       port,
       host,

@@ -6,11 +6,11 @@
   "scripts": {
     "lint:fix": "xo --fix --quiet .",
     "lint": "xo .",
-    "local": "nodemon . | bunyan",
+    "local": "NODE_ENV=${NODE_ENV:-development} nodemon . | bunyan",
     "prelocal": "docker-compose -f ./.local/docker-compose.yml up -d",
     "start": "node .",
-    "tdd": "mocha -wbR min",
-    "test": "mocha"
+    "tdd": "yarn test -wbR min",
+    "test": "NODE_ENV=${NODE_ENV:-testing} mocha"
   },
   "repository": {
     "type": "git",
@@ -55,10 +55,11 @@
     "blipp": "^3.1.2",
     "boom": "^7.3.0",
     "bunyan": "^1.8.12",
+    "bunyan-logstash-tcp": "^1.0.0",
     "config": "^3.0.1",
     "good": "^8.1.2",
-    "good-bunyan": "^2.0.1",
     "good-console": "^8.0.0",
+    "good-logstash": "^3.0.0",
     "good-squeeze": "^5.1.0",
     "hapi": "^18.1.0",
     "hapi-auth-jwt2": "^8.3.0",
@@ -66,6 +67,7 @@
     "joi": "^14.3.1"
   },
   "devDependencies": {
+    "axios": "^0.18.0",
     "chai": "^4.2.0",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.5",

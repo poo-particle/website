@@ -1,25 +1,33 @@
 const good = require('good');
-const { logger } = require('../lib/logger');
 
 module.exports = {
   plugin: good,
   options: {
     reporters: {
-      consoleReporter: [
+      logstash: [
         {
-          module: 'good-bunyan',
+          module: 'good-squeeze',
+          name: 'Squeeze',
+          args: [{ log: '*', error: '*' }],
+        },
+        {
+          module: 'good-logstash',
           args: [
-            { response: '*', log: '*', error: '*', request: '*' },
-            {
-              logger,
-              levels: {
-                response: 'info',
-                error: 'error',
-                request: 'info',
-              },
-            },
+            'udp://localhost:5000',
+            { tags: [`env:${process.env.NODE_ENV}`, 'website'] },
           ],
         },
+      ],
+      console: [
+        {
+          module: 'good-squeeze',
+          name: 'Squeeze',
+          args: [{ log: '*', request: '*', response: '*', error: '*' }],
+        },
+        {
+          module: 'good-console',
+        },
+        'stdout',
       ],
     },
   },

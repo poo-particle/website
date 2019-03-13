@@ -10,7 +10,7 @@
     "prelocal": "docker-compose -f ./.local/docker-compose.yml up -d",
     "start": "node .",
     "tdd": "yarn test -wbR min",
-    "test": "NODE_ENV=${NODE_ENV:-testing} mocha"
+    "test": "NODE_ENV=${NODE_ENV:-testing} mocha --exit"
   },
   "repository": {
     "type": "git",

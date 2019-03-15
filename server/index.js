@@ -2,6 +2,8 @@ const Hapi = require('hapi');
 const boom = require('boom');
 const config = require('config');
 
+const { logger } = require('./lib/logger');
+
 const plugins = require('./plugins');
 
 function isTestEnv() {
@@ -47,8 +49,7 @@ module.exports = {
 
         if (!isTestEnv()) {
           await server.start();
-
-          server.log('info', { msg: 'Server started.', uri: server.info.uri });
+          logger.info('Server started.', { uri: server.info.uri });
 
           return;
         }
